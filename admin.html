@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="assets/img/llogo.png" rel="icon" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halaman Admin - Rekomendasi Vitamin</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --background-color: #f0f9ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background-color);
+            color: #1e293b;
+        }
+
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            height: 100vh;
+            background-color: white;
+            padding: 2rem;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-link {
+            padding: 0.75rem 1rem;
+            color: #64748b;
+            text-decoration: none;
+            display: block;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-add {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            width: 500px;
+            border-radius: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .search-input {
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-right: 1rem;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Rekomendasi Vitamin</div>
+        <ul class="nav-links">
+            <li><a href="#gejala" class="nav-link active" data-section="gejala-section">Kelola Gejala</a></li>
+            <li><a href="#vitamin" class="nav-link" data-section="vitamin-section">Kelola Vitamin</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="section" id="gejala-section">
+            <div class="header">
+                <h2>Kelola Gejala</h2>
+                <div class="header-actions">
+                    <input type="text" class="search-input" placeholder="Cari gejala...">
+                    <button class="btn btn-add">+ Tambah Gejala</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Gejala</th>
+                        <th>Kategori</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="gejala-tbody"></tbody>
+            </table>
+        </div>
+
+        <div class="section" id="vitamin-section">
+            <div class="header">
+                <h2>Kelola Vitamin</h2>
+                <div class="header-actions">
+                    <input type="text" class="search-input" placeholder="Cari vitamin...">
+                    <button class="btn btn-add">+ Tambah Vitamin</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Vitamin</th>
+                        <th>Kategori Penyakit</th>
+                        <th>Manfaat</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="vitamin-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Gejala Modal -->
+    <div class="modal" id="gejala-modal">
+        <div class="modal-content">
+            <h3>Tambah/Edit Gejala</h3>
+            <form id="gejala-form">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label>Gejala</label>
+                    <input type="text" name="gejala" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <input type="text" name="kategori" required>
+                </div>
+                <button type="submit" class="btn btn-add">Simpan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Vitamin Modal -->
+    <div class="modal" id="vitamin-modal">
+        <div class="modal-content">
+            <h3>Tambah/Edit Vitamin</h3>
+            <form id="vitamin-form">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label>Vitamin</label>
+                    <input type="text" name="vitamin" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori Penyakit</label>
+                    <input type="text" name="kategori" required>
+                </div>
+                <div class="form-group">
+                    <label>Manfaat</label>
+                    <textarea name="manfaat" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-add">Simpan</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data management
+        const DataStore = {
+            gejala: JSON.parse(localStorage.getItem('gejala')) || [
+                { id: 1, gejala: 'Lelah berkepanjangan', kategori: 'Anemia Defisiensi Besi', status: 'Aktif' },
+                { id: 2, gejala: 'Pusing saat berdiri', kategori: 'Anemia Defisiensi Besi', status: 'Aktif' }
+            ],
+            vitamin: JSON.parse(localStorage.getItem('vitamin')) || [
+                { id: 1, vitamin: 'Vitamin C', kategori: 'Anemia Defisiensi Besi', manfaat: 'Membantu penyerapan zat besi dari makanan' },
+                { id: 2, vitamin: 'Vitamin B12', kategori: 'Anemia Defisiensi Besi', manfaat: 'Meningkatkan produksi sel darah merah' }
+            ],
+
+            save() {
+                localStorage.setItem('gejala', JSON.stringify(this.gejala));
+                localStorage.setItem('vitamin', JSON.stringify(this.vitamin));
+            },
+
+            getNewId(type) {
+                const data = this[type];
+                return data.length > 0 ? Math.max(...data.map(item => item.id)) + 1 : 1;
+            }
+        };
+
+        // UI management
+        const UI = {
+            renderGejala(data = DataStore.gejala) {
+                const tbody = document.getElementById('gejala-tbody');
+                tbody.innerHTML = data.map((item, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.gejala}</td>
+                        <td>${item.kategori}</td>
+                        <td><span class="badge badge-active">${item.status}</span></td>
+                        <td>
+                            <button class="btn btn-edit" data-id="${item.id}">Edit</button>
+                            <button class="btn btn-delete" data-id="${item.id}">Hapus</button>
+                        </td>
+                    </tr>
+                `).join('');
+            },
+
+            renderVitamin(data = DataStore.vitamin) {
+                const tbody = document.getElementById('vitamin-tbody');
+                tbody.innerHTML = data.map((item, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.vitamin}</td>
+                        <td>${item.kategori}</td>
+                        <td>${item.manfaat}</td>
+                        <td>
+                            <button class="btn btn-edit" data-id="${item.id}">Edit</button>
+                            <button class="btn btn-delete" data-id="${item.id}">Hapus</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        };
+
+        // Event handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial render
+            UI.renderGejala();
+            UI.renderVitamin();
+
+            // Navigation
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.style.display = 'none');
+            document.getElementById('gejala-section').style.display = 'block';
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    sections.forEach(section => section.style.display = 'none');
+                    document.getElementById(this.getAttribute('data-section')).style.display = 'block';
+                });
+            });
+
+            // Modal handlers
+            const gejalaModal = document.getElementById('gejala-modal');
+            const vitaminModal = document.getElementById('vitamin-modal');
+            let editingId = null;
+
+            // Add buttons
+            document.querySelector('#gejala-section .btn-add').addEventListener('click', () => {
+                editingId = null;
+                document.getElementById('gejala-form').reset();
+                gejalaModal.style.display = 'block';
+            });
+
+            document.querySelector('#vitamin-section .btn-add').addEventListener('click', () => {
+                editingId = null;
+                document.getElementById('vitamin-form').reset();
+                vitaminModal.style.display = 'block';
+            });
+
+            // Form submissions
+            document.getElementById('gejala-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    gejala: formData.get('gejala'),
+                    kategori: formData.get('kategori'),
+                    status: 'Aktif'
+                };
+
+                if (editingId) {
+                    const index = DataStore.gejala.findIndex(item => item.id === editingId);
+                    DataStore.gejala[index] = { ...DataStore.gejala[index], ...data };
+                } else {
+                    data.id = DataStore.getNewId('gejala');
+                    DataStore.gejala.push(data);
+                }
+
+                DataStore.save();
+                UI.renderGejala();
+                gejalaModal.style.display = 'none';
+                this.reset();
+            });
+
+            document.getElementById('vitamin-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const data = {
+                    vitamin: formData.get('vitamin'),
+                    kategori: formData.get('kategori'),
+                    manfaat: formData.get('manfaat')
+                };
+
+                if (editingId) {
+                    const index = DataStore.vitamin.findIndex(item => item.id === editingId);
+                    DataStore.vitamin[index] = { ...DataStore.vitamin[index], ...data };
+                } else {
+                    data.id = DataStore.getNewId('vitamin');
+                    DataStore.vitamin.push(data);
+                }
+
+                DataStore.save();
+                UI.renderVitamin();
+                vitaminModal.style.display = 'none';
+                this.reset();
+            });
+
+            // Edit and Delete handlers
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('.btn-edit')) {
+                    editingId = parseInt(e.target.dataset.id);
+                    const isGejala = e.target.closest('#gejala-section') !== null;
+                    const item = isGejala 
+                        ? DataStore.gejala.find(item => item.id === editingId)
+                        : DataStore.vitamin.find(item => item.id === editingId);
+
+                    if (isGejala) {
+                        const form = document.getElementById('gejala-form');
+                        form.elements.gejala.value = item.gejala;
+                        form.elements.kategori.value = item.kategori;
+                        gejalaModal.style.display = 'block';
+                    } else {
+                        const form = document.getElementById('vitamin-form');
+                        form.elements.vitamin.value = item.vitamin;
+                        form.elements.kategori.value = item.kategori;
+                        form.elements.manfaat.value = item.manfaat;
+                        vitaminModal.style.display = 'block';
+                    }
+                }
+
+                if (e.target.matches('.btn-delete')) {
+                    const id = parseInt(e.target.dataset.id);
+                    const isGejala = e.target.closest('#gejala-section') !== null;
+                    
+                    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                        if (isGejala) {
+                            DataStore.gejala = DataStore.gejala.filter(item => item.id !== id);
+                            UI.renderGejala();
+                        } else {
+                            DataStore.vitamin = DataStore.vitamin.filter(item => item.id !== id);
+                            UI.renderVitamin();
+                        }
+                        DataStore.save();
+                    }
+                }
+            });
+
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === gejalaModal) {
+                    gejalaModal.style.display = 'none';
+                }
+                if (e.target === vitaminModal) {
+                    vitaminModal.style.display = 'none';
+                }
+            });
+
+            // Search functionality
+            const gejalaSearch = document.querySelector('#gejala-section .search-input');
+            const vitaminSearch = document.querySelector('#vitamin-section .search-input');
+
+            gejalaSearch.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredGejala = DataStore.gejala.filter(item => 
+                    item.gejala.toLowerCase().includes(searchTerm) || 
+                    item.kategori.toLowerCase().includes(searchTerm)
+                );
+                UI.renderGejala(filteredGejala);
+            });
+
+            vitaminSearch.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredVitamin = DataStore.vitamin.filter(item => 
+                    item.vitamin.toLowerCase().includes(searchTerm) || 
+                    item.kategori.toLowerCase().includes(searchTerm) ||
+                    item.manfaat.toLowerCase().includes(searchTerm)
+                );
+                UI.renderVitamin(filteredVitamin);
+            });
+        });
+    </script>
+</body>
+</html>
